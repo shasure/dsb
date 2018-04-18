@@ -8,6 +8,10 @@ __pycache__/
 # C extensions
 *.so
 
+# Customize
+postprocessing/mask-rcnn_*
+postprocessing/pix2pix_*
+
 # Distribution / packaging
 .Python
 build/
@@ -37,7 +41,7 @@ MANIFEST
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Unit test / coverage reports
+# Unit script / coverage reports
 htmlcov/
 .tox/
 .coverage

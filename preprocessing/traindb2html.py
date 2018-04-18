@@ -14,10 +14,10 @@ from tqdm import tqdm
 """将stage1_train中的input和masksmerged存储到html中，方便查看"""
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--train_dir", type=str, default="/datasets/dsb/stage1_train",
-                    help="e.g. /datasets/dsb/stage1_train")
 parser.add_argument("--output_dir", type=str, default="/datasets/dsb",
                     help="e.g. /datasets/dsb/")
+parser.add_argument("--subdir", type=str, default="stage1_train",
+                    help="e.g. stage1_train")
 
 a = parser.parse_args()
 
@@ -48,9 +48,9 @@ def append_index(filesets, step=False):
 
 
 def gen_filesets(step=None):
-    dirnames = next(os.walk(a.train_dir))[1]
-    paths = [os.path.join('stage1_train', id_, 'images', id_ + '.png') for id_ in dirnames]
-    mask_paths = [os.path.join('stage1_train', id_, 'masksmerged', id_ + '.png') for id_ in dirnames]
+    dirnames = next(os.walk(os.path.join(a.output_dir, a.subdir)))[1]
+    paths = [os.path.join(a.subdir, id_, 'images', id_ + '.png') for id_ in dirnames]
+    mask_paths = [os.path.join(a.subdir, id_, 'masksmerged', id_ + '.png') for id_ in dirnames]
 
     filesets = []
     for i, in_path in enumerate(paths):

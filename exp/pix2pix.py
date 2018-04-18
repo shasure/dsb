@@ -17,7 +17,7 @@ import tensorflow as tf
 parser = argparse.ArgumentParser()
 parser.add_argument("--input_dir", type=str, default="/datasets/dsb/stage1_train",
                     help="path to folder containing images")
-parser.add_argument("--mode", required=True, choices=["train", "test", "export"])
+parser.add_argument("--mode", required=True, choices=["train", "script", "export"])
 parser.add_argument("--output_dir", required=True, help="where to put output files")
 parser.add_argument("--seed", type=int)
 parser.add_argument("--checkpoint", default=None,
@@ -72,9 +72,9 @@ CUDA_VISIBLE_DEVICES=3 python pix2pix.py \
 --input_dir /datasets/dsb/stage1_train \
 --which_direction AtoB
 
-# test the model
+# script the model
 CUDA_VISIBLE_DEVICES=3  python pix2pix.py \
---mode test \
+--mode script \
 --output_dir /train_dir/dsb/dsb_test \
 --input_dir /datasets/dsb/stage1_test \
 --checkpoint dsb_train
@@ -111,7 +111,7 @@ def load_examples():
         return name
 
     # if the image names are numbers, sort by the value rather than asciibetically
-    # having sorted inputs means that the outputs are sorted in test mode
+    # having sorted inputs means that the outputs are sorted in script mode
     if all(get_name(path).isdigit() for path in img_input_paths):
         img_input_paths = sorted(img_input_paths, key=lambda path: int(get_name(path)))
         mask_input_paths = sorted(mask_input_paths, key=lambda path: int(get_name(path)))
@@ -481,10 +481,10 @@ def main():
     if not os.path.exists(a.output_dir):
         os.makedirs(a.output_dir)
 
-    # 设置mode='test'下的部分参数
-    if a.mode == "test" or a.mode == "export":
+    # 设置mode='script'下的部分参数
+    if a.mode == "script" or a.mode == "export":
         if a.checkpoint is None:
-            raise Exception("checkpoint required for test mode")
+            raise Exception("checkpoint required for script mode")
 
         # load some options from the checkpoint
         options = {"which_direction", "ngf", "ndf", "lab_colorization"}
@@ -493,7 +493,7 @@ def main():
                 if key in options:
                     print("loaded", key, "=", val)
                     setattr(a, key, val)
-        # disable these features in test mode，在test和export过程中不进行水平翻转、scale、crop
+        # disable these features in script mode，在test和export过程中不进行水平翻转、scale、crop
         a.scale_size = CROP_SIZE
         a.flip = False
 
@@ -610,9 +610,9 @@ def main():
         if a.max_steps is not None:
             max_steps = a.max_steps
 
-        if a.mode == "test":
+        if a.mode == "script":
             # testing
-            # at most, process the test data once
+            # at most, process the script data once
             start = time.time()
             max_steps = min(examples.steps_per_epoch, max_steps)
             for step in range(max_steps):

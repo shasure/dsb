@@ -26,7 +26,7 @@ a = parser.parse_args()
 
 
 def rle_encoding(x):
-    dots = np.where(x.T.flatten() == 1)[0]
+    dots = np.where(x.T.flatten() == 1)[0]  # np.where返回非0的indices
     run_lengths = []
     prev = -2
     for b in dots:
@@ -45,7 +45,7 @@ def prob_to_rles(x, cutoff=0.5):
 def get_test_img_size(test_dir, test_ids):
     sizes_test = []
 
-    print('Getting test images size... ')
+    print('Getting script images size... ')
     for n, id_ in enumerate(test_ids):
         path = os.path.join(test_dir, id_)
         img = imread(path + '/images/' + id_ + '.png')[:, :, :3]
@@ -62,14 +62,14 @@ def load_predicted_test_img(test_dir, test_ids):
 
 if __name__ == '__main__':
 
-    # first get test image original size
+    # first get script image original size
     test_ids = next(os.walk(a.dbtest_dir))[1]
     sizes_test = get_test_img_size(a.dbtest_dir, test_ids)
 
-    # load predicted test img
+    # load predicted script img
     preds_test = load_predicted_test_img(a.test_dir, test_ids)
 
-    # Create list of upsampled test masks
+    # Create list of upsampled script masks
     preds_test_upsampled = []
     for i in range(len(preds_test)):
         preds_test_upsampled.append(resize(np.squeeze(preds_test[i]),

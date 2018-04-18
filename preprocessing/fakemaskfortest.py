@@ -10,7 +10,7 @@ import numpy as np
 from skimage.io import imread, imsave
 from tqdm import tqdm
 
-"""生成fake mask image for test"""
+"""生成fake mask image for script"""
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--data_dir", type=str, default="/datasets/dsb/stage1_test",

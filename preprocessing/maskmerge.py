@@ -15,6 +15,8 @@ from tqdm import tqdm
 parser = argparse.ArgumentParser()
 parser.add_argument("--data_dir", type=str, default="/datasets/dsb/stage1_train",
                     help="e.g. /datasets/dsb/stage1_train")
+parser.add_argument("--subdir", type=str, default="masks",
+                    help="e.g. /datasets/dsb/stage1_train")
 
 flag = parser.parse_args()
 print(flag)
@@ -33,8 +35,8 @@ if __name__ == '__main__':
         else:
             raise FileExistsError("masksmerged dir already exists")
         mask = None
-        for mask_file in next(os.walk(os.path.join(path, 'masks')))[2]:
-            mask_ = imread(os.path.join(path, 'masks', mask_file))
+        for mask_file in next(os.walk(os.path.join(path, flag.subdir)))[2]:
+            mask_ = imread(os.path.join(path, flag.subdir, mask_file))
             if mask is None:
                 mask = np.zeros((mask_.shape[0], mask_.shape[1]), dtype=np.uint8)  # 处理training image mask
             mask = np.maximum(mask, mask_)  # 将mask叠加到一起，白色为255，黑色为0

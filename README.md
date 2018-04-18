@@ -19,7 +19,7 @@ CUDA_VISIBLE_DEVICES=3 python pix2pix.py \
 --input_dir /home/zsy/datasets/dsb/stage1_train \
 --which_direction AtoB
 
-# test the model
+datatest
 CUDA_VISIBLE_DEVICES=3  python pix2pix.py \
 --mode test \
 --output_dir /home/zsy/train_dir/dsb/dsb_test \

@@ -50,13 +50,13 @@ np.random.seed = seed
 
 # In[3]:
 
-# Get train and test IDs
+# Get train and script IDs
 # os.walk返回generator，(root, idrs, files)
 train_ids = next(os.walk(TRAIN_PATH))[1]  # images ids
 test_ids = next(os.walk(TEST_PATH))[1]
 
 # # Get the data
-# Let's first import all the images and associated masks. I downsample both the training and test images to keep things light and manageable, but we need to keep a record of the original sizes of the test images to upsample our predicted masks and create correct run-length encodings later on. There are definitely better ways to handle this, but it works fine for now!
+# Let's first import all the images and associated masks. I downsample both the training and script images to keep things light and manageable, but we need to keep a record of the original sizes of the script images to upsample our predicted masks and create correct run-length encodings later on. There are definitely better ways to handle this, but it works fine for now!
 
 # In[ ]:
 
@@ -78,10 +78,10 @@ for n, id_ in tqdm(enumerate(train_ids), total=len(train_ids)):  # 处理每个t
         mask = np.maximum(mask, mask_)  # 将mask叠加到一起，白色为255，黑色为0
     Y_train[n] = mask
 
-# Get and resize test images
+# Get and resize script images
 X_test = np.zeros((len(test_ids), IMG_HEIGHT, IMG_WIDTH, IMG_CHANNELS), dtype=np.uint8)
 sizes_test = []
-print('Getting and resizing test images ... ')
+print('Getting and resizing script images ... ')
 sys.stdout.flush()
 for n, id_ in tqdm(enumerate(test_ids), total=len(test_ids)):
     path = TEST_PATH + id_
@@ -210,11 +210,11 @@ results = model.fit(X_train, Y_train, validation_split=0.1, batch_size=16, epoch
 # 
 # # Make predictions
 # 
-# Let's make predictions both on the test set, the val set and the train set (as a sanity check). Remember to load the best saved model if you've used early stopping and checkpointing.
+# Let's make predictions both on the script set, the val set and the train set (as a sanity check). Remember to load the best saved model if you've used early stopping and checkpointing.
 
 # In[ ]:
 
-# Predict on train, val and test
+# Predict on train, val and script
 model = load_model('model-dsbowl2018-1.h5', custom_objects={'mean_iou': mean_iou})
 preds_train = model.predict(X_train[:int(X_train.shape[0] * 0.9)], verbose=1)
 preds_val = model.predict(X_train[int(X_train.shape[0] * 0.9):], verbose=1)
@@ -225,7 +225,7 @@ preds_train_t = (preds_train > 0.5).astype(np.uint8)
 preds_val_t = (preds_val > 0.5).astype(np.uint8)
 preds_test_t = (preds_test > 0.5).astype(np.uint8)
 
-# Create list of upsampled test masks
+# Create list of upsampled script masks
 preds_test_upsampled = []
 for i in range(len(preds_test)):
     preds_test_upsampled.append(resize(np.squeeze(preds_test[i]),
@@ -283,7 +283,7 @@ def prob_to_rles(x, cutoff=0.5):
         yield rle_encoding(lab_img == i)
 
 
-# Let's iterate over the test IDs and generate run-length encodings for each seperate mask identified by skimage ...
+# Let's iterate over the script IDs and generate run-length encodings for each seperate mask identified by skimage ...
 
 # In[ ]:
 
